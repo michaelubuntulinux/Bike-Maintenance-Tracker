@@ -13,7 +13,7 @@ import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { BikeStore } from '../../../core/services/bike.store';
 import { SettingsService } from '../../../core/services/settings.service';
 import { todayDateInput } from '../../../core/utils/maintenance.util';
-import { revokeUrl } from '../../../core/utils/photo.util';
+import { revokeUrl, compressImageForStorage } from '../../../core/utils/photo.util';
 import {
   filterBrands,
   filterModels,
@@ -122,18 +122,25 @@ export class BikeFormComponent implements OnInit {
     if (!file) {
       return;
     }
-    if (file.size > 2_500_000) {
-      this.error = 'La foto debe pesar menos de 2.5 MB';
+    if (!file.type.startsWith('image/')) {
+      this.error = 'Elegí un archivo de imagen';
+      input.value = '';
       return;
     }
-    if (this.previewOwned) {
-      revokeUrl(this.photoPreview());
-    }
-    const url = URL.createObjectURL(file);
-    this.photoPreview.set(url);
-    this.photoBlob = file;
-    this.previewOwned = true;
     this.error = '';
+    try {
+      const compressed = await compressImageForStorage(file);
+      if (this.previewOwned) {
+        revokeUrl(this.photoPreview());
+      }
+      this.photoPreview.set(URL.createObjectURL(compressed));
+      this.photoBlob = compressed;
+      this.previewOwned = true;
+    } catch {
+      this.error = 'No se pudo procesar la foto. Probá con otra imagen.';
+    } finally {
+      input.value = '';
+    }
   }
 
   clearPhoto(): void {

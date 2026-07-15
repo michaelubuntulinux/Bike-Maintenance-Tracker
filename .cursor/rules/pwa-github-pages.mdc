@@ -24,5 +24,5 @@ alwaysApply: false
 
 ## Seguridad local
 
-- Fotos en Data URL: limitar tamaño (~2.5MB) en el form.
+- Fotos: comprimir en cliente (`compressImageForStorage`) antes de IndexedDB.
 - Backup JSON puede ser grande; no loguear contenido completo.

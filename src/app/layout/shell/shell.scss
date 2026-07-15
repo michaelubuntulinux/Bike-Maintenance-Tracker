@@ -21,14 +21,6 @@
   color: inherit;
 }
 
-.brand-mark {
-  width: 1.35rem;
-  height: 1.35rem;
-  border-radius: 999px;
-  border: 2px solid var(--bikesev-accent);
-  box-shadow: inset 0 0 0 3px color-mix(in srgb, var(--bikesev-accent) 35%, transparent);
-}
-
 .brand-text {
   font-family: var(--bikesev-display);
   font-weight: 700;
@@ -69,27 +61,6 @@ a.active {
   gap: 1rem;
   text-align: center;
   color: var(--mat-sys-on-surface-variant);
-}
-
-.boot-pulse {
-  width: 3rem;
-  height: 3rem;
-  margin: 0 auto;
-  border-radius: 50%;
-  border: 3px solid var(--bikesev-accent);
-  animation: pulse 1.2s ease-in-out infinite;
-}
-
-@keyframes pulse {
-  0%,
-  100% {
-    transform: scale(0.9);
-    opacity: 0.55;
-  }
-  50% {
-    transform: scale(1.05);
-    opacity: 1;
-  }
 }
 
 @media (max-width: 600px) {

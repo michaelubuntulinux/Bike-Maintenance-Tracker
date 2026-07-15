@@ -4,10 +4,11 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { AuthMode, CognitoAuthService } from '../../../core/auth/cognito-auth.service';
+import { BrandMarkComponent } from '../../../shared/brand-mark/brand-mark';
 
 @Component({
   selector: 'app-auth-gate',
-  imports: [FormsModule, MatButtonModule, MatFormFieldModule, MatInputModule],
+  imports: [FormsModule, MatButtonModule, MatFormFieldModule, MatInputModule, BrandMarkComponent],
   templateUrl: './auth-gate.html',
   styleUrl: './auth-gate.scss',
 })

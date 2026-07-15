@@ -8,6 +8,7 @@ import { BikeStore } from '../../core/services/bike.store';
 import { SettingsService } from '../../core/services/settings.service';
 import { CognitoAuthService } from '../../core/auth/cognito-auth.service';
 import { AuthGateComponent } from '../../features/auth/auth-gate/auth-gate';
+import { BrandMarkComponent } from '../../shared/brand-mark/brand-mark';
 
 @Component({
   selector: 'app-shell',
@@ -20,6 +21,7 @@ import { AuthGateComponent } from '../../features/auth/auth-gate/auth-gate';
     MatIconModule,
     MatTooltipModule,
     AuthGateComponent,
+    BrandMarkComponent,
   ],
   templateUrl: './shell.html',
   styleUrl: './shell.scss',

@@ -1,20 +1,20 @@
 @if (!authReady()) {
   <div class="boot">
-    <div class="boot-pulse"></div>
+    <app-brand-mark [spin]="true" size="xl" />
     <p>Cargando bikeSev…</p>
   </div>
 } @else if (!authenticated()) {
   <app-auth-gate />
 } @else if (!dataReady()) {
   <div class="boot">
-    <div class="boot-pulse"></div>
+    <app-brand-mark [spin]="true" size="xl" />
     <p>Cargando datos…</p>
   </div>
 } @else {
   <div class="shell">
     <mat-toolbar class="top-bar">
       <a routerLink="/" class="brand" aria-label="bikeSev inicio">
-        <span class="brand-mark" aria-hidden="true"></span>
+        <app-brand-mark />
         <span class="brand-text">bikeSev</span>
       </a>
       <span class="spacer"></span>
