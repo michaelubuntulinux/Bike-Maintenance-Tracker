@@ -100,7 +100,7 @@ export class AuthGateComponent {
     const blob = `${name} ${msg}`;
 
     if (blob.includes('NotAuthorizedException') || blob.includes('Incorrect username or password')) {
-      return 'Usuario o contraseña incorrectos. Usá el “Nombre de usuario” de Cognito (a veces no es el email) y la contraseña temporal del email si aún no la cambiaste.';
+      return 'Usuario o contraseña incorrectos. Si ya cambiaste la contraseña en bikeSev, usá la NUEVA permanente (no la temporal que pusiste al crear el usuario).';
     }
     if (blob.includes('UserNotFoundException')) {
       return 'Usuario no encontrado. Creá el usuario en Cognito → Usuarios.';

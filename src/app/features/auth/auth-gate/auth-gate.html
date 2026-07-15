@@ -16,17 +16,17 @@
       <form class="form" (ngSubmit)="submit()">
         @if (mode() !== 'newPassword') {
           <mat-form-field appearance="outline" class="full">
-            <mat-label>Usuario (Cognito)</mat-label>
+            <mat-label>Email</mat-label>
             <input
               matInput
-              type="text"
+              type="email"
               autocomplete="username"
               [ngModel]="username()"
               (ngModelChange)="username.set($event)"
               [ngModelOptions]="{ standalone: true }"
               required
             />
-            <mat-hint>Exactamente el “Nombre de usuario” del pool</mat-hint>
+            <mat-hint>Tu email de Cognito</mat-hint>
           </mat-form-field>
         }
 
@@ -36,7 +36,7 @@
             <input
               matInput
               type="password"
-              autocomplete="current-password"
+              autocomplete="new-password"
               [ngModel]="password()"
               (ngModelChange)="password.set($event)"
               [ngModelOptions]="{ standalone: true }"
