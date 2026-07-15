@@ -13,14 +13,20 @@
     } @else {
       <p class="lede">Acceso solo con cuenta creada en Cognito. Sin registro público.</p>
 
-      <form class="form" (ngSubmit)="submit()">
+      <form class="form" autocomplete="on" (ngSubmit)="submit()">
         @if (mode() !== 'newPassword') {
           <mat-form-field appearance="outline" class="full">
             <mat-label>Email</mat-label>
             <input
               matInput
               type="email"
+              name="username"
+              id="bikesev-username"
               autocomplete="username"
+              inputmode="email"
+              autocapitalize="off"
+              autocorrect="off"
+              spellcheck="false"
               [ngModel]="username()"
               (ngModelChange)="username.set($event)"
               [ngModelOptions]="{ standalone: true }"
@@ -36,7 +42,9 @@
             <input
               matInput
               type="password"
-              autocomplete="new-password"
+              name="password"
+              id="bikesev-password"
+              autocomplete="current-password"
               [ngModel]="password()"
               (ngModelChange)="password.set($event)"
               [ngModelOptions]="{ standalone: true }"
@@ -51,6 +59,8 @@
             <input
               matInput
               type="password"
+              name="new-password"
+              id="bikesev-new-password"
               autocomplete="new-password"
               [ngModel]="newPassword()"
               (ngModelChange)="newPassword.set($event)"
@@ -63,6 +73,8 @@
             <input
               matInput
               type="password"
+              name="confirm-password"
+              id="bikesev-confirm-password"
               autocomplete="new-password"
               [ngModel]="confirmPassword()"
               (ngModelChange)="confirmPassword.set($event)"
