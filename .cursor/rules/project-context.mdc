@@ -1,0 +1,28 @@
+---
+description: Contexto de producto bikeSev — siempre aplicar
+alwaysApply: true
+---
+
+# Contexto bikeSev
+
+App PWA **offline-first** de mantenimiento MTB. Español en UI. Sin servidor.
+
+## Invariantes de dominio
+
+- Registrar salida: sumar horas a `totalHours` **y** a **todos** los contadores de mantenimiento activos.
+- Realizar mantenimiento: contador → `0`, actualizar fecha, historial.
+- Alertas: `warning` si horas > intervalo; `critical` si horas > intervalo × 1.2.
+- Hardtail: sin amortiguador, pivotes ni rodamientos de cuadro; pregunta al crear/editar.
+- Backup JSON debe restaurar el estado completo (bikes, rides, events, history, settings).
+- “Torque completo bicicleta” no forma parte del catálogo.
+
+## Prioridades al cambiar código
+
+1. No romper offline / IndexedDB / export-import.
+2. Mantener arquitectura por feature + services (listo para sync futura).
+3. UX móvil con una mano (FAB, diálogos, sticky actions).
+4. Tema claro/oscuro/sistema vía `SettingsService.applyTheme`.
+
+## Stack fijo
+
+Angular 20 standalone + Signals + Material 3 + SCSS + PWA. No sustituir por otra SPA/framework.

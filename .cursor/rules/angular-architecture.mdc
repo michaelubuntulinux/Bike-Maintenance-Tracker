@@ -1,0 +1,38 @@
+---
+description: Angular 20 standalone, Signals, lazy routes
+globs: "**/*.{ts,html}"
+alwaysApply: false
+---
+
+# Angular (estado del arte)
+
+## Componentes
+
+- Solo **standalone** (`imports: [...]`). Sin NgModules nuevos.
+- Input/estado reactivo con **signals**; `computed()` para vistas derivadas.
+- Preferir `inject()` sobre constructor DI.
+- Templates con `@if` / `@for` / `@empty` (control flow moderno), no `*ngIf`/`*ngFor` salvo legado.
+
+## Routing
+
+- Features con `loadComponent` (lazy). Shell eager.
+- Rutas en `app.routes.ts`; no rutas hardcodeadas mágicas en servicios.
+
+## Cambio de detección
+
+- Zone sigue activo (CLI default); coalescing en `app.config`.
+- No introducir `OnPush` a medias: si se usa, signals + inputs coherentes.
+- Diálogos Material: pasar `data`, cerrar con resultado; no compartiple state global innecesario.
+
+## Ejemplo store
+
+```typescript
+readonly bikes = this.bikesSignal.asReadonly();
+readonly upcoming = computed(() => /* derivado */);
+```
+
+## No hacer
+
+- Services con estado mutable clásico + Subject donde un signal alcanza.
+- Componentes dios (>300 líneas): partir por pestaña/diálogos.
+- `provideHttpClient` / interceptors hasta que exista API real.

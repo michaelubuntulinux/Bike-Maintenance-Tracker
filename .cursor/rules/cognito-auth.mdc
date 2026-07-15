@@ -1,0 +1,13 @@
+---
+description: Amazon Cognito + Amplify Auth
+globs: "**/auth/**/*.{ts,html},**/environments/**/*.ts,**/shell/**"
+alwaysApply: false
+---
+
+# Cognito Auth
+
+- Config en `src/environments/environment.ts` (`userPoolId`, `userPoolClientId`).
+- `configureAmplifyAuth()` antes de cualquier API de Amplify Auth.
+- Gate: `AuthGateComponent` — sin sesión no se carga IndexedDB (`BikeStore.init`).
+- Al `signOut`: `clearSession()` + Amplify `signOut`.
+- Datos de negocio siguen locales; Cognito solo autentica identidad.

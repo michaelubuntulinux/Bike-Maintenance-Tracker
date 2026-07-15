@@ -1,0 +1,44 @@
+---
+description: Calidad de código TypeScript/Angular (estado del arte)
+globs: "**/*.{ts,html,scss}"
+alwaysApply: false
+---
+
+# Calidad de código
+
+## TypeScript
+
+- `strict` implícito del proyecto: tipar modelos en `core/models`; evitar `any`.
+- Preferir `readonly` en signals públicos (`asReadonly()`).
+- Errores: mensajes claros en español para UI; no tragar excepciones vacías.
+- IDs con `crypto.randomUUID()` (`createId`); timestamps ISO.
+
+## Organización
+
+- Un concern por archivo; features no importan IndexedDB directo — solo stores/services.
+- Sin código duplicado: catálogos en `core/defaults`, alertas en `maintenance.util`.
+- Nombres descriptivos en inglés para código; copy de UI en español.
+
+## Anti-patterns
+
+```typescript
+// ❌ BAD — lógica de dominio en el componente
+bike.totalHours += hours;
+
+// ✅ GOOD — orquestación en BikeStore
+await this.store.registerRide({ ... });
+```
+
+```typescript
+// ❌ BAD — mutar signal state sin actualizar persistencia
+this.bikesSignal.update(...)
+
+// ✅ GOOD — persistir primero (o en la misma operación atómica) y luego signal
+await this.db.saveBike(bike);
+this.upsertBikeLocal(bike);
+```
+
+## Tests / cambios
+
+- Tras reglas de horas o backup, verificar mentalmente: salida → contadores; mantenimiento → reset; import → reload stores.
+- No añadir dependencias pesadas sin necesidad (mantener PWA liviana).

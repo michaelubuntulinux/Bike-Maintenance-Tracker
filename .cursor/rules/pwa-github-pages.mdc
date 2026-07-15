@@ -1,0 +1,28 @@
+---
+description: PWA offline y deploy GitHub Pages
+globs: "{ngsw-config.json,angular.json,public/**,src/index.html,package.json}"
+alwaysApply: false
+---
+
+# PWA + GitHub Pages
+
+## Offline
+
+- Service worker solo en producción (`!isDevMode()`).
+- Asset caching vía `ngsw-config.json`; no romper precache al renombrar assets sin rebuild.
+- App usable sin red tras primera visita; datos = IndexedDB (no SW).
+
+## Installability
+
+- `manifest.webmanifest`: `name`/`short_name` bikeSev, `display: standalone`, icons en `public/icons/`.
+- `theme-color` alineado al shell oscuro/asfalto.
+
+## GitHub Pages
+
+- Build: `npm run build:gh` → base-href `/Bike-Maintenance-Tracker/` + `404.html` (SPA fallback).
+- No asumir `/` en assets absolutos; preferir rutas relativas del build.
+
+## Seguridad local
+
+- Fotos en Data URL: limitar tamaño (~2.5MB) en el form.
+- Backup JSON puede ser grande; no loguear contenido completo.
