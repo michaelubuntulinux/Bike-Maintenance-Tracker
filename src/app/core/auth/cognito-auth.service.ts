@@ -1,16 +1,16 @@
 import { Injectable, computed, signal } from '@angular/core';
 import {
+  confirmSignIn,
   confirmSignUp,
   getCurrentUser,
   resendSignUpCode,
   signIn,
   signOut,
-  signUp,
 } from 'aws-amplify/auth';
 import { configureAmplifyAuth } from './amplify.config';
 import { isCognitoConfigured } from '../../../environments/environment';
 
-export type AuthMode = 'signIn' | 'signUp' | 'confirm';
+export type AuthMode = 'signIn' | 'confirm' | 'newPassword';
 
 @Injectable({ providedIn: 'root' })
 export class CognitoAuthService {
@@ -49,36 +49,35 @@ export class CognitoAuthService {
     return isCognitoConfigured();
   }
 
-  async signIn(email: string, password: string): Promise<void> {
+  /** @returns 'ok' | 'newPassword' | 'confirm' */
+  async signIn(username: string, password: string): Promise<'ok' | 'newPassword' | 'confirm'> {
     this.ensureConfigured();
-    const result = await signIn({ username: email.trim(), password });
+    const result = await signIn({
+      username: username.trim(),
+      password,
+      options: { authFlowType: 'USER_SRP_AUTH' },
+    });
     if (result.isSignedIn) {
       await this.refreshUser();
-      return;
+      return 'ok';
     }
-    if (result.nextStep.signInStep === 'CONFIRM_SIGN_UP') {
-      throw new Error('CONFIRM_SIGN_UP');
+    const step = result.nextStep.signInStep;
+    if (step === 'CONFIRM_SIGN_IN_WITH_NEW_PASSWORD_REQUIRED') {
+      return 'newPassword';
     }
-    throw new Error('No se pudo iniciar sesión. Completá el paso pendiente en Cognito.');
-  }
-
-  async signUp(email: string, password: string): Promise<'done' | 'confirm'> {
-    this.ensureConfigured();
-    const result = await signUp({
-      username: email.trim(),
-      password,
-      options: {
-        userAttributes: { email: email.trim() },
-      },
-    });
-    if (result.isSignUpComplete) {
-      await this.signIn(email, password);
-      return 'done';
-    }
-    if (result.nextStep.signUpStep === 'CONFIRM_SIGN_UP') {
+    if (step === 'CONFIRM_SIGN_UP') {
       return 'confirm';
     }
-    return 'confirm';
+    throw new Error(`Paso pendiente de Cognito: ${step}`);
+  }
+
+  async completeNewPassword(newPassword: string): Promise<void> {
+    this.ensureConfigured();
+    const result = await confirmSignIn({ challengeResponse: newPassword });
+    if (!result.isSignedIn) {
+      throw new Error('No se pudo confirmar la contraseña nueva');
+    }
+    await this.refreshUser();
   }
 
   async confirm(email: string, code: string): Promise<void> {

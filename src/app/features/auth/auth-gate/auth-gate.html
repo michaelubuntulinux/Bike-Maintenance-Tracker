@@ -11,45 +11,26 @@
         <code>src/environments/environment.ts</code> con tu User Pool ID y App Client ID.
       </p>
     } @else {
-      <p class="lede">Iniciá sesión con Amazon Cognito para usar bikeSev.</p>
-
-      <div class="tabs">
-        <button
-          mat-button
-          type="button"
-          [class.active]="mode() === 'signIn'"
-          (click)="setMode('signIn')"
-        >
-          Entrar
-        </button>
-        <button
-          mat-button
-          type="button"
-          [class.active]="mode() === 'signUp'"
-          (click)="setMode('signUp')"
-        >
-          Registrarse
-        </button>
-        @if (mode() === 'confirm') {
-          <button mat-button type="button" class="active">Confirmar</button>
-        }
-      </div>
+      <p class="lede">Acceso solo con cuenta creada en Cognito. Sin registro público.</p>
 
       <form class="form" (ngSubmit)="submit()">
-        <mat-form-field appearance="outline" class="full">
-          <mat-label>Email</mat-label>
-          <input
-            matInput
-            type="email"
-            autocomplete="username"
-            [ngModel]="email()"
-            (ngModelChange)="email.set($event)"
-            [ngModelOptions]="{ standalone: true }"
-            required
-          />
-        </mat-form-field>
+        @if (mode() !== 'newPassword') {
+          <mat-form-field appearance="outline" class="full">
+            <mat-label>Usuario (Cognito)</mat-label>
+            <input
+              matInput
+              type="text"
+              autocomplete="username"
+              [ngModel]="username()"
+              (ngModelChange)="username.set($event)"
+              [ngModelOptions]="{ standalone: true }"
+              required
+            />
+            <mat-hint>Exactamente el “Nombre de usuario” del pool</mat-hint>
+          </mat-form-field>
+        }
 
-        @if (mode() !== 'confirm') {
+        @if (mode() === 'signIn') {
           <mat-form-field appearance="outline" class="full">
             <mat-label>Contraseña</mat-label>
             <input
@@ -64,9 +45,21 @@
           </mat-form-field>
         }
 
-        @if (mode() === 'signUp') {
+        @if (mode() === 'newPassword') {
           <mat-form-field appearance="outline" class="full">
-            <mat-label>Confirmar contraseña</mat-label>
+            <mat-label>Contraseña nueva</mat-label>
+            <input
+              matInput
+              type="password"
+              autocomplete="new-password"
+              [ngModel]="newPassword()"
+              (ngModelChange)="newPassword.set($event)"
+              [ngModelOptions]="{ standalone: true }"
+              required
+            />
+          </mat-form-field>
+          <mat-form-field appearance="outline" class="full">
+            <mat-label>Confirmar contraseña nueva</mat-label>
             <input
               matInput
               type="password"
@@ -104,8 +97,8 @@
         <button mat-flat-button color="primary" type="submit" class="full" [disabled]="busy()">
           @if (mode() === 'signIn') {
             Entrar
-          } @else if (mode() === 'signUp') {
-            Crear cuenta
+          } @else if (mode() === 'newPassword') {
+            Guardar contraseña y entrar
           } @else {
             Confirmar y entrar
           }

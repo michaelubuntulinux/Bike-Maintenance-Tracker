@@ -3,12 +3,11 @@ import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { MatIconModule } from '@angular/material/icon';
 import { AuthMode, CognitoAuthService } from '../../../core/auth/cognito-auth.service';
 
 @Component({
   selector: 'app-auth-gate',
-  imports: [FormsModule, MatButtonModule, MatFormFieldModule, MatInputModule, MatIconModule],
+  imports: [FormsModule, MatButtonModule, MatFormFieldModule, MatInputModule],
   templateUrl: './auth-gate.html',
   styleUrl: './auth-gate.scss',
 })
@@ -17,19 +16,14 @@ export class AuthGateComponent {
 
   readonly configured = this.auth.configured;
   readonly mode = signal<AuthMode>('signIn');
-  readonly email = signal('');
+  readonly username = signal('');
   readonly password = signal('');
   readonly confirmPassword = signal('');
+  readonly newPassword = signal('');
   readonly code = signal('');
   readonly error = signal('');
   readonly info = signal('');
   readonly busy = signal(false);
-
-  setMode(mode: AuthMode): void {
-    this.mode.set(mode);
-    this.error.set('');
-    this.info.set('');
-  }
 
   async submit(): Promise<void> {
     if (this.busy()) {
@@ -39,43 +33,48 @@ export class AuthGateComponent {
     this.info.set('');
     this.busy.set(true);
     try {
-      const email = this.email().trim();
+      const username = this.username().trim();
       const password = this.password();
-      if (!email || !password) {
-        throw new Error('Email y contraseña son obligatorios');
+
+      if (this.mode() === 'newPassword') {
+        const next = this.newPassword();
+        if (next.length < 8) {
+          throw new Error('La contraseña nueva debe tener al menos 8 caracteres');
+        }
+        if (next !== this.confirmPassword()) {
+          throw new Error('Las contraseñas no coinciden');
+        }
+        await this.auth.completeNewPassword(next);
+        return;
+      }
+
+      if (!username || !password) {
+        throw new Error('Usuario y contraseña son obligatorios');
       }
 
       if (this.mode() === 'signIn') {
-        try {
-          await this.auth.signIn(email, password);
-        } catch (e) {
-          if (e instanceof Error && e.message === 'CONFIRM_SIGN_UP') {
-            this.mode.set('confirm');
-            this.info.set('Confirmá tu email con el código que te enviamos.');
-            return;
-          }
-          throw e;
+        const next = await this.auth.signIn(username, password);
+        if (next === 'newPassword') {
+          this.mode.set('newPassword');
+          this.confirmPassword.set('');
+          this.newPassword.set('');
+          this.info.set('Cognito pide una contraseña permanente. Elegí una nueva.');
+          return;
         }
-      } else if (this.mode() === 'signUp') {
-        if (password !== this.confirmPassword()) {
-          throw new Error('Las contraseñas no coinciden');
-        }
-        if (password.length < 8) {
-          throw new Error('La contraseña debe tener al menos 8 caracteres');
-        }
-        const next = await this.auth.signUp(email, password);
         if (next === 'confirm') {
           this.mode.set('confirm');
-          this.info.set('Te enviamos un código de verificación al email.');
+          this.info.set('Confirmá tu email con el código que te enviamos.');
         }
-      } else {
-        if (!this.code().trim()) {
-          throw new Error('Ingresá el código de verificación');
-        }
-        await this.auth.confirm(email, this.code());
-        await this.auth.signIn(email, password);
+        return;
       }
+
+      if (!this.code().trim()) {
+        throw new Error('Ingresá el código de verificación');
+      }
+      await this.auth.confirm(username, this.code());
+      await this.auth.signIn(username, password);
     } catch (e) {
+      console.error('[bikeSev auth]', e);
       this.error.set(this.mapError(e));
     } finally {
       this.busy.set(false);
@@ -85,7 +84,7 @@ export class AuthGateComponent {
   async resend(): Promise<void> {
     this.error.set('');
     try {
-      await this.auth.resendCode(this.email());
+      await this.auth.resendCode(this.username());
       this.info.set('Código reenviado.');
     } catch (e) {
       this.error.set(this.mapError(e));
@@ -97,24 +96,33 @@ export class AuthGateComponent {
       return 'Error de autenticación';
     }
     const msg = e.message || '';
-    if (msg.includes('UserAlreadyExistsException') || msg.includes('UsernameExistsException')) {
-      return 'Ese email ya está registrado. Iniciá sesión.';
+    const name = 'name' in e ? String((e as { name?: string }).name) : '';
+    const blob = `${name} ${msg}`;
+
+    if (blob.includes('NotAuthorizedException') || blob.includes('Incorrect username or password')) {
+      return 'Usuario o contraseña incorrectos. Usá el “Nombre de usuario” de Cognito (a veces no es el email) y la contraseña temporal del email si aún no la cambiaste.';
     }
-    if (msg.includes('NotAuthorizedException') || msg.includes('Incorrect username or password')) {
-      return 'Email o contraseña incorrectos';
+    if (blob.includes('UserNotFoundException')) {
+      return 'Usuario no encontrado. Creá el usuario en Cognito → Usuarios.';
     }
-    if (msg.includes('UserNotConfirmedException') || msg === 'CONFIRM_SIGN_UP') {
+    if (blob.includes('PasswordResetRequiredException')) {
+      return 'Debés restablecer la contraseña desde la consola de Cognito.';
+    }
+    if (blob.includes('UserNotConfirmedException') || msg === 'CONFIRM_SIGN_UP') {
       return 'Debés confirmar tu email antes de entrar.';
     }
-    if (msg.includes('CodeMismatchException')) {
+    if (blob.includes('CodeMismatchException')) {
       return 'Código inválido';
     }
-    if (msg.includes('InvalidPasswordException')) {
+    if (blob.includes('InvalidPasswordException')) {
       return 'La contraseña no cumple la política de Cognito';
+    }
+    if (blob.includes('USER_PASSWORD_AUTH') || blob.includes('Auth flow not enabled')) {
+      return 'El App client no tiene el flujo SRP habilitado. En Cognito → App client → Authentication flows, activá ALLOW_USER_SRP_AUTH.';
     }
     if (msg.includes('Cognito no está configurado')) {
       return msg;
     }
-    return msg.length > 140 ? 'No se pudo autenticar. Revisá credenciales y configuración.' : msg;
+    return msg.length > 160 ? 'No se pudo autenticar. Revisá usuario, contraseña y App client.' : msg;
   }
 }

@@ -50,16 +50,6 @@
   color: var(--mat-sys-error);
 }
 
-.tabs {
-  display: flex;
-  gap: 0.25rem;
-  flex-wrap: wrap;
-
-  button.active {
-    color: var(--bikesev-accent);
-  }
-}
-
 .form {
   display: grid;
   gap: 0.35rem;

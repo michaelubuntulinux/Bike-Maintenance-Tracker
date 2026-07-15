@@ -16,9 +16,6 @@ export function configureAmplifyAuth(): boolean {
       Cognito: {
         userPoolId: environment.cognito.userPoolId,
         userPoolClientId: environment.cognito.userPoolClientId,
-        loginWith: {
-          email: true,
-        },
       },
     },
   });
