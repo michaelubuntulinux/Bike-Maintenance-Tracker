@@ -1,0 +1,28 @@
+---
+description: Datos local-first (IndexedDB), fotos Blob y backup JSON
+globs: "**/core/**/*.ts"
+alwaysApply: false
+---
+
+# Datos local-first (IndexedDB)
+
+## Capas
+
+1. `IndexedDbStore` — wrapper IDB (incluye Blobs)
+2. `DatabaseService` — stores + export/import
+3. `BikeStore` / `SettingsService` / `BackupService` — dominio + signals
+
+Features **nunca** abren `indexedDB` directo.
+
+## Stores
+
+`bikes`, `rides`, `maintenanceEvents`, `history`, `settings`, `photos`
+
+- Fotos: Blob en `photos` (id = bikeId). En UI usar `photoUrl` (object URL).
+- Backup v2: JSON con `photos[].dataBase64`. Aceptar también v1 con `photoDataUrl`.
+
+## Consistencia
+
+- Ride / mantenimiento: persistir y luego signals.
+- Tras `importBackup`: `settings.init()` + `bikes.reloadFromDb()`.
+- Al borrar bici: borrar foto Blob y revocar object URL.

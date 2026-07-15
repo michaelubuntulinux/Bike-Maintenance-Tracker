@@ -1,0 +1,10 @@
+.form {
+  display: grid;
+  gap: 0.25rem;
+  padding-top: 0.25rem;
+}
+
+.error {
+  color: var(--mat-sys-error);
+  margin: 0;
+}

@@ -1,0 +1,131 @@
+<section class="page">
+  <header>
+    <p class="eyebrow">Preferencias</p>
+    <h1>Configuración</h1>
+    <p class="lede">Intervalos, catálogos y respaldo local. Todo vive en tu dispositivo.</p>
+  </header>
+
+  <section class="block">
+    <h2>Cuenta</h2>
+    @if (userEmail(); as email) {
+      <p class="lede">Sesión Cognito: <strong>{{ email }}</strong></p>
+    }
+    <button mat-stroked-button type="button" (click)="signOut()">
+      <mat-icon>logout</mat-icon>
+      Cerrar sesión
+    </button>
+  </section>
+
+  <section class="block">
+    <h2>Tema</h2>
+    <mat-form-field appearance="outline">
+      <mat-label>Apariencia</mat-label>
+      <mat-select
+        [ngModel]="theme()"
+        (ngModelChange)="theme.set($event)"
+        [ngModelOptions]="{ standalone: true }"
+      >
+        <mat-option value="system">Sistema</mat-option>
+        <mat-option value="light">Claro</mat-option>
+        <mat-option value="dark">Oscuro</mat-option>
+      </mat-select>
+    </mat-form-field>
+    <button mat-flat-button color="primary" type="button" (click)="saveTheme()">
+      Aplicar tema
+    </button>
+  </section>
+
+  <section class="block">
+    <h2>Tipos de bicicleta</h2>
+    @for (t of bikeTypes(); track t.id) {
+      <div class="row">
+        <mat-form-field appearance="outline" class="grow">
+          <mat-label>Etiqueta</mat-label>
+          <input matInput [(ngModel)]="t.label" [ngModelOptions]="{ standalone: true }" />
+        </mat-form-field>
+        <button mat-icon-button type="button" (click)="removeBikeType(t.id)" aria-label="Quitar">
+          <mat-icon>delete</mat-icon>
+        </button>
+      </div>
+    }
+    <button mat-stroked-button type="button" (click)="addBikeType()">
+      <mat-icon>add</mat-icon>
+      Agregar tipo
+    </button>
+  </section>
+
+  <section class="block">
+    <h2>Tipos de salida</h2>
+    @for (t of rideTypes(); track t.id) {
+      <div class="row">
+        <mat-form-field appearance="outline" class="grow">
+          <mat-label>Etiqueta</mat-label>
+          <input matInput [(ngModel)]="t.label" [ngModelOptions]="{ standalone: true }" />
+        </mat-form-field>
+        <button mat-icon-button type="button" (click)="removeRideType(t.id)" aria-label="Quitar">
+          <mat-icon>delete</mat-icon>
+        </button>
+      </div>
+    }
+    <button mat-stroked-button type="button" (click)="addRideType()">
+      <mat-icon>add</mat-icon>
+      Agregar tipo
+    </button>
+  </section>
+
+  <section class="block">
+    <h2>Intervalos de mantenimiento (horas)</h2>
+    @for (group of maintenanceGroups; track group.id) {
+      @if (typesInGroup(group.id); as items) {
+        @if (items.length) {
+          <h3 class="group-label">{{ group.label }}</h3>
+          @for (m of items; track m.id) {
+            <div class="row">
+              <span class="name">{{ m.name }}</span>
+              <mat-form-field appearance="outline" class="hours">
+                <mat-label>Horas</mat-label>
+                <input
+                  matInput
+                  type="number"
+                  min="1"
+                  [ngModel]="m.intervalHours"
+                  (ngModelChange)="updateInterval(m.id, $event)"
+                  [ngModelOptions]="{ standalone: true }"
+                />
+              </mat-form-field>
+            </div>
+          }
+        }
+      }
+    }
+  </section>
+
+  <div class="actions sticky">
+    <button mat-flat-button color="primary" type="button" (click)="saveCatalogs()">
+      Guardar catálogos e intervalos
+    </button>
+  </div>
+
+  <section class="block">
+    <h2>Respaldo</h2>
+    <p class="lede">
+      Todos los datos viven en <strong>IndexedDB</strong> de este dispositivo (bicis, salidas,
+      mantenimientos, configuración y fotos como Blob) y funcionan offline. Exportá un JSON
+      completo para migrar o recuperar la información en otro equipo, sin servidor.
+    </p>
+    <div class="backup-actions">
+      <button mat-stroked-button type="button" (click)="exportBackup()">
+        <mat-icon>download</mat-icon>
+        Exportar respaldo JSON
+      </button>
+      <label class="import-btn">
+        <input type="file" accept="application/json,.json" (change)="onImport($event)" />
+        <mat-icon>upload</mat-icon>
+        Importar respaldo JSON
+      </label>
+    </div>
+    <p class="backup-note">
+      Importar reemplaza todos los datos locales actuales por el contenido del archivo.
+    </p>
+  </section>
+</section>

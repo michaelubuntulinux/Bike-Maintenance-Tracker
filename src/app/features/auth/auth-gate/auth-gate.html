@@ -1,0 +1,116 @@
+<section class="gate">
+  <div class="card">
+    <div class="brand">
+      <span class="mark" aria-hidden="true"></span>
+      <h1>bikeSev</h1>
+    </div>
+
+    @if (!configured()) {
+      <p class="lede warn">
+        Cognito aún no está configurado. Editá
+        <code>src/environments/environment.ts</code> con tu User Pool ID y App Client ID.
+      </p>
+    } @else {
+      <p class="lede">Iniciá sesión con Amazon Cognito para usar bikeSev.</p>
+
+      <div class="tabs">
+        <button
+          mat-button
+          type="button"
+          [class.active]="mode() === 'signIn'"
+          (click)="setMode('signIn')"
+        >
+          Entrar
+        </button>
+        <button
+          mat-button
+          type="button"
+          [class.active]="mode() === 'signUp'"
+          (click)="setMode('signUp')"
+        >
+          Registrarse
+        </button>
+        @if (mode() === 'confirm') {
+          <button mat-button type="button" class="active">Confirmar</button>
+        }
+      </div>
+
+      <form class="form" (ngSubmit)="submit()">
+        <mat-form-field appearance="outline" class="full">
+          <mat-label>Email</mat-label>
+          <input
+            matInput
+            type="email"
+            autocomplete="username"
+            [ngModel]="email()"
+            (ngModelChange)="email.set($event)"
+            [ngModelOptions]="{ standalone: true }"
+            required
+          />
+        </mat-form-field>
+
+        @if (mode() !== 'confirm') {
+          <mat-form-field appearance="outline" class="full">
+            <mat-label>Contraseña</mat-label>
+            <input
+              matInput
+              type="password"
+              autocomplete="current-password"
+              [ngModel]="password()"
+              (ngModelChange)="password.set($event)"
+              [ngModelOptions]="{ standalone: true }"
+              required
+            />
+          </mat-form-field>
+        }
+
+        @if (mode() === 'signUp') {
+          <mat-form-field appearance="outline" class="full">
+            <mat-label>Confirmar contraseña</mat-label>
+            <input
+              matInput
+              type="password"
+              autocomplete="new-password"
+              [ngModel]="confirmPassword()"
+              (ngModelChange)="confirmPassword.set($event)"
+              [ngModelOptions]="{ standalone: true }"
+              required
+            />
+          </mat-form-field>
+        }
+
+        @if (mode() === 'confirm') {
+          <mat-form-field appearance="outline" class="full">
+            <mat-label>Código de verificación</mat-label>
+            <input
+              matInput
+              inputmode="numeric"
+              [ngModel]="code()"
+              (ngModelChange)="code.set($event)"
+              [ngModelOptions]="{ standalone: true }"
+              required
+            />
+          </mat-form-field>
+          <button mat-button type="button" (click)="resend()">Reenviar código</button>
+        }
+
+        @if (info()) {
+          <p class="info">{{ info() }}</p>
+        }
+        @if (error()) {
+          <p class="error">{{ error() }}</p>
+        }
+
+        <button mat-flat-button color="primary" type="submit" class="full" [disabled]="busy()">
+          @if (mode() === 'signIn') {
+            Entrar
+          } @else if (mode() === 'signUp') {
+            Crear cuenta
+          } @else {
+            Confirmar y entrar
+          }
+        </button>
+      </form>
+    }
+  </div>
+</section>

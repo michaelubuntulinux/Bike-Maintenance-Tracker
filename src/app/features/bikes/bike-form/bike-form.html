@@ -1,0 +1,131 @@
+<section class="page">
+  <header class="page-head">
+    <a mat-button routerLink="/">
+      <mat-icon>arrow_back</mat-icon>
+      Volver
+    </a>
+    <h1>{{ editId() ? 'Editar bicicleta' : 'Nueva bicicleta' }}</h1>
+  </header>
+
+  <form class="form" [formGroup]="form" (ngSubmit)="save()">
+    <div class="photo-block">
+      <div class="preview" [class.has-photo]="!!photoPreview()">
+        @if (photoPreview(); as photo) {
+          <img [src]="photo" alt="Vista previa" />
+        } @else {
+          <mat-icon>add_a_photo</mat-icon>
+        }
+      </div>
+      <div class="photo-actions">
+        <label class="file-btn">
+          <input type="file" accept="image/*" (change)="onPhotoSelected($event)" />
+          Elegir foto
+        </label>
+        @if (photoPreview()) {
+          <button mat-button type="button" (click)="clearPhoto()">Quitar</button>
+        }
+      </div>
+    </div>
+
+    <div class="grid">
+      <mat-form-field appearance="outline">
+        <mat-label>Nombre</mat-label>
+        <input matInput formControlName="name" />
+      </mat-form-field>
+      <mat-form-field appearance="outline">
+        <mat-label>Marca</mat-label>
+        <input
+          matInput
+          formControlName="brand"
+          [matAutocomplete]="brandAuto"
+          placeholder="Merida, Trek, Specialized…"
+          (blur)="onBrandSelected()"
+        />
+        <mat-autocomplete #brandAuto="matAutocomplete" (optionSelected)="onBrandSelected()">
+          @for (brand of filteredBrands(); track brand) {
+            <mat-option [value]="brand">{{ brand }}</mat-option>
+          }
+        </mat-autocomplete>
+        <mat-hint>Elige una o escribe otra</mat-hint>
+      </mat-form-field>
+      <mat-form-field appearance="outline">
+        <mat-label>Modelo</mat-label>
+        <input
+          matInput
+          formControlName="model"
+          [matAutocomplete]="modelAuto"
+          [placeholder]="hasCatalogModels() ? 'Elige un modelo' : 'Escribe el modelo'"
+        />
+        <mat-autocomplete #modelAuto="matAutocomplete">
+          @for (model of filteredModels(); track model) {
+            <mat-option [value]="model">{{ model }}</mat-option>
+          }
+        </mat-autocomplete>
+        <mat-hint>
+          @if (hasCatalogModels()) {
+            Modelos sugeridos para {{ brandValue() || 'esta marca' }}
+          } @else {
+            Sin catálogo para esa marca — puedes escribir libre
+          }
+        </mat-hint>
+      </mat-form-field>
+      <mat-form-field appearance="outline">
+        <mat-label>Año</mat-label>
+        <input matInput type="number" formControlName="year" />
+      </mat-form-field>
+      <mat-form-field appearance="outline">
+        <mat-label>Tamaño</mat-label>
+        <input matInput formControlName="size" placeholder="M / 29''" />
+      </mat-form-field>
+      <mat-form-field appearance="outline">
+        <mat-label>Tipo</mat-label>
+        <mat-select formControlName="typeId">
+          @for (t of bikeTypes; track t.id) {
+            <mat-option [value]="t.id">{{ t.label }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+
+      <div class="suspension-field">
+        <span class="suspension-label">¿Doble suspensión o hardtail?</span>
+        <mat-radio-group formControlName="suspensionLayout" class="suspension-options">
+          <mat-radio-button value="full">Doble suspensión</mat-radio-button>
+          <mat-radio-button value="hardtail">Hardtail</mat-radio-button>
+        </mat-radio-group>
+        <p class="suspension-hint">
+          Hardtail omite amortiguador, pivotes y rodamientos de cuadro.
+        </p>
+      </div>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Color</mat-label>
+        <input matInput formControlName="color" />
+      </mat-form-field>
+      <mat-form-field appearance="outline">
+        <mat-label>Peso kg (opcional)</mat-label>
+        <input matInput type="number" step="0.1" formControlName="weightKg" />
+      </mat-form-field>
+      <mat-form-field appearance="outline">
+        <mat-label>Fecha de compra</mat-label>
+        <input matInput type="date" formControlName="purchaseDate" />
+      </mat-form-field>
+      <mat-form-field appearance="outline">
+        <mat-label>Kilómetros iniciales (opcional)</mat-label>
+        <input matInput type="number" step="0.1" formControlName="initialKm" />
+      </mat-form-field>
+      <mat-form-field appearance="outline">
+        <mat-label>Horas iniciales</mat-label>
+        <input matInput type="number" step="0.1" formControlName="initialHours" />
+      </mat-form-field>
+    </div>
+
+    @if (error) {
+      <p class="error">{{ error }}</p>
+    }
+
+    <div class="actions">
+      <a mat-button routerLink="/">Cancelar</a>
+      <button mat-flat-button color="primary" type="submit" [disabled]="saving">Guardar</button>
+    </div>
+  </form>
+</section>

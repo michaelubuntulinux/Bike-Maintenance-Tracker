@@ -1,0 +1,69 @@
+<section class="page">
+  <header class="page-head">
+    <div>
+      <p class="eyebrow">Garage</p>
+      <h1>Mis bicicletas</h1>
+      <p class="lede">Registro local de horas, salidas y mantenciones.</p>
+    </div>
+  </header>
+
+  @if (empty()) {
+    <div class="empty">
+      <div class="empty-visual" aria-hidden="true"></div>
+      <h2>Sin bicis todavía</h2>
+      <p>Agrega tu primera MTB para empezar a contar horas y mantenciones.</p>
+      <a mat-flat-button color="primary" routerLink="/bikes/new">
+        <mat-icon>add</mat-icon>
+        Nueva bicicleta
+      </a>
+    </div>
+  } @else {
+    <div class="grid">
+      @for (bike of bikes(); track bike.id) {
+        <article class="bike-card" (click)="goDetail(bike.id)" (keyup.enter)="goDetail(bike.id)" tabindex="0" role="link">
+          <div class="photo" [class.has-photo]="!!bike.photoUrl">
+            @if (bike.photoUrl) {
+              <img [src]="bike.photoUrl" [alt]="bike.name" />
+            } @else {
+              <mat-icon>pedal_bike</mat-icon>
+            }
+          </div>
+          <div class="body">
+            <div class="title-row">
+              <h2>{{ bike.name }}</h2>
+              <mat-chip>{{ typeLabel(bike.typeId) }}</mat-chip>
+            </div>
+            <p class="meta">{{ bike.brand }} · {{ bike.model }} · {{ bike.year }}</p>
+            <div class="stats">
+              <div>
+                <span class="label">Horas</span>
+                <strong>{{ bike.totalHours | number: '1.0-1' }}</strong>
+              </div>
+              <div>
+                <span class="label">Último uso</span>
+                <strong>
+                  @if (bike.lastUsedAt) {
+                    {{ bike.lastUsedAt | date: 'd MMM y' }}
+                  } @else {
+                    —
+                  }
+                </strong>
+              </div>
+            </div>
+            <div class="actions" (click)="$event.stopPropagation()">
+              <button mat-stroked-button type="button" (click)="openRide(bike.id, $event)">
+                <mat-icon>timer</mat-icon>
+                Usar bicicleta
+              </button>
+              <a mat-button [routerLink]="['/bikes', bike.id]">Ver detalle</a>
+            </div>
+          </div>
+        </article>
+      }
+    </div>
+  }
+
+  <a mat-fab class="fab" color="primary" routerLink="/bikes/new" aria-label="Agregar bicicleta">
+    <mat-icon>add</mat-icon>
+  </a>
+</section>

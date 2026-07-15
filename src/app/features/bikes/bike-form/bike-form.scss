@@ -1,0 +1,117 @@
+.page-head {
+  display: grid;
+  gap: 0.35rem;
+  margin-bottom: 1rem;
+
+  h1 {
+    margin: 0;
+    font-family: var(--bikesev-display);
+    letter-spacing: 0.02em;
+  }
+}
+
+.form {
+  display: grid;
+  gap: 1rem;
+}
+
+.photo-block {
+  display: grid;
+  gap: 0.75rem;
+  justify-items: start;
+}
+
+.preview {
+  width: min(100%, 320px);
+  aspect-ratio: 16 / 10;
+  border-radius: 1rem;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  background: var(--mat-sys-surface-container-highest);
+  border: 1px dashed color-mix(in srgb, var(--mat-sys-outline) 60%, transparent);
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  mat-icon {
+    opacity: 0.5;
+    font-size: 2rem;
+    width: 2rem;
+    height: 2rem;
+  }
+}
+
+.file-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.55rem 0.9rem;
+  border-radius: 999px;
+  background: var(--mat-sys-secondary-container);
+  color: var(--mat-sys-on-secondary-container);
+  cursor: pointer;
+  font-weight: 600;
+
+  input {
+    display: none;
+  }
+}
+
+.photo-actions {
+  display: flex;
+  gap: 0.35rem;
+  align-items: center;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 0.35rem 0.75rem;
+}
+
+.suspension-field {
+  grid-column: 1 / -1;
+  padding: 0.85rem 1rem;
+  border-radius: 0.85rem;
+  background: var(--mat-sys-surface-container);
+  border: 1px solid color-mix(in srgb, var(--mat-sys-outline-variant) 50%, transparent);
+}
+
+.suspension-label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 0.55rem;
+}
+
+.suspension-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem 1.25rem;
+}
+
+.suspension-hint {
+  margin: 0.55rem 0 0;
+  font-size: 0.85rem;
+  color: var(--mat-sys-on-surface-variant);
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  position: sticky;
+  bottom: 0.75rem;
+  padding: 0.75rem;
+  border-radius: 1rem;
+  background: color-mix(in srgb, var(--mat-sys-surface) 90%, transparent);
+  backdrop-filter: blur(10px);
+}
+
+.error {
+  color: var(--mat-sys-error);
+  margin: 0;
+}

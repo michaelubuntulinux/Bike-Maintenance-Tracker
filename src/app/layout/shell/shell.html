@@ -1,0 +1,52 @@
+@if (!authReady()) {
+  <div class="boot">
+    <div class="boot-pulse"></div>
+    <p>Cargando bikeSev…</p>
+  </div>
+} @else if (!authenticated()) {
+  <app-auth-gate />
+} @else if (!dataReady()) {
+  <div class="boot">
+    <div class="boot-pulse"></div>
+    <p>Cargando datos…</p>
+  </div>
+} @else {
+  <div class="shell">
+    <mat-toolbar class="top-bar">
+      <a routerLink="/" class="brand" aria-label="bikeSev inicio">
+        <span class="brand-mark" aria-hidden="true"></span>
+        <span class="brand-text">bikeSev</span>
+      </a>
+      <span class="spacer"></span>
+      @if (userEmail(); as email) {
+        <span class="user-email" [matTooltip]="email">{{ email }}</span>
+      }
+      <a mat-button routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+        Bicis
+      </a>
+      <a mat-button routerLink="/settings" routerLinkActive="active">Config</a>
+      <button
+        mat-icon-button
+        type="button"
+        (click)="toggleTheme()"
+        matTooltip="Tema claro / oscuro / sistema"
+        aria-label="Cambiar tema"
+      >
+        <mat-icon>contrast</mat-icon>
+      </button>
+      <button
+        mat-icon-button
+        type="button"
+        (click)="signOut()"
+        matTooltip="Cerrar sesión"
+        aria-label="Cerrar sesión Cognito"
+      >
+        <mat-icon>logout</mat-icon>
+      </button>
+    </mat-toolbar>
+
+    <main class="content">
+      <router-outlet />
+    </main>
+  </div>
+}

@@ -1,0 +1,170 @@
+@if (bike(); as bike) {
+  <section class="page">
+    <header class="hero">
+      <a mat-button routerLink="/">
+        <mat-icon>arrow_back</mat-icon>
+        Garage
+      </a>
+
+      <div class="hero-grid">
+        <div class="photo" [class.has-photo]="!!bike.photoUrl">
+          @if (bike.photoUrl) {
+            <img [src]="bike.photoUrl" [alt]="bike.name" />
+          } @else {
+            <mat-icon>pedal_bike</mat-icon>
+          }
+        </div>
+        <div class="info">
+          <div class="chips">
+            <mat-chip>{{ typeLabel(bike.typeId) }}</mat-chip>
+            <mat-chip>{{ suspensionLabel() }}</mat-chip>
+          </div>
+          <h1>{{ bike.name }}</h1>
+          <p>{{ bike.brand }} {{ bike.model }} · {{ bike.year }} · {{ bike.size || '—' }}</p>
+          <p class="muted">
+            Color {{ bike.color || '—' }}
+            @if (bike.weightKg != null) {
+              · {{ bike.weightKg }} kg
+            }
+          </p>
+          <div class="hero-actions">
+            <button mat-flat-button color="primary" type="button" (click)="openRide()">
+              <mat-icon>timer</mat-icon>
+              Registrar salida
+            </button>
+            <a mat-stroked-button [routerLink]="['/bikes', bike.id, 'edit']">Editar</a>
+            <button mat-button type="button" color="warn" (click)="deleteBike()">Eliminar</button>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <mat-tab-group animationDuration="200ms" class="tabs">
+      <mat-tab label="Dashboard">
+        <div class="tab-pad">
+          <div class="dash-grid">
+            @for (card of featuredCards(); track card.label) {
+              <article class="stat" [attr.data-level]="card.level">
+                <span>{{ card.label }}</span>
+                <strong>{{ card.value | number: '1.0-1' }} h</strong>
+              </article>
+            }
+          </div>
+
+          <h2>Próximos mantenimientos</h2>
+          @if (upcoming().length === 0) {
+            <p class="muted">Todo al día por ahora.</p>
+          } @else {
+            <ul class="upcoming">
+              @for (item of upcoming(); track item.type.id) {
+                <li [attr.data-level]="item.level">
+                  <div>
+                    <strong>{{ item.type.name }}</strong>
+                    <span
+                      >Desde último: {{ item.counter.hoursSinceLast | number: '1.0-1' }} /
+                      {{ item.intervalHours }} h · Total uso:
+                      {{ item.counter.totalUsageHours | number: '1.0-1' }} h</span
+                    >
+                  </div>
+                  <div class="row-actions">
+                    <button mat-button type="button" (click)="openEditMaintenance(item.type.id)">
+                      Editar
+                    </button>
+                    <button mat-button type="button" (click)="openMaintenance(item.type.id)">
+                      Realizar
+                    </button>
+                  </div>
+                </li>
+              }
+            </ul>
+          }
+        </div>
+      </mat-tab>
+
+      <mat-tab label="Mantenimiento">
+        <div class="tab-pad">
+          <div class="maint-groups">
+            @for (group of maintenanceGroups(); track group.id) {
+              <section class="maint-group">
+                <h2 class="group-title">{{ group.label }}</h2>
+                <div class="maint-list">
+                  @for (row of group.items; track row.type.id) {
+                    <article class="maint-row" [attr.data-level]="row.level">
+                      <div>
+                        <h3>{{ row.type.name }}</h3>
+                        <p>
+                          Desde último: {{ row.hours | number: '1.0-1' }} h
+                          · total uso {{ row.totalUsageHours | number: '1.0-1' }} h
+                          · intervalo {{ row.intervalHours }} h
+                        </p>
+                        <p class="muted">
+                          Último:
+                          @if (row.counter?.lastPerformedAt) {
+                            {{ row.counter!.lastPerformedAt | date: 'd MMM y' }}
+                          } @else {
+                            sin registro
+                          }
+                        </p>
+                        @if (row.counter?.notes) {
+                          <p class="notes">{{ row.counter!.notes }}</p>
+                        }
+                      </div>
+                      <div class="row-actions">
+                        <button
+                          mat-stroked-button
+                          type="button"
+                          (click)="openEditMaintenance(row.type.id)"
+                        >
+                          Editar
+                        </button>
+                        <button
+                          mat-stroked-button
+                          type="button"
+                          (click)="openMaintenance(row.type.id)"
+                        >
+                          Realizar
+                        </button>
+                      </div>
+                    </article>
+                  }
+                </div>
+              </section>
+            }
+          </div>
+        </div>
+      </mat-tab>
+
+      <mat-tab label="Historial">
+        <div class="tab-pad">
+          @if (history().length === 0) {
+            <p class="muted">Aún no hay eventos.</p>
+          } @else {
+            <ul class="history">
+              @for (entry of history(); track entry.id) {
+                <li>
+                  <div class="when">
+                    <strong>{{ entry.date | date: 'd MMM y' }}</strong>
+                    <span class="kind">{{ entry.kind === 'ride' ? 'Salida' : 'Mantención' }}</span>
+                  </div>
+                  <div>
+                    <h3>{{ entry.title }}</h3>
+                    <p>{{ entry.description }}</p>
+                    @if (entry.comments) {
+                      <p class="notes">{{ entry.comments }}</p>
+                    }
+                  </div>
+                  <div class="hours">{{ entry.hours | number: '1.0-1' }} h</div>
+                </li>
+              }
+            </ul>
+          }
+        </div>
+      </mat-tab>
+    </mat-tab-group>
+  </section>
+} @else {
+  <section class="page">
+    <p>No se encontró la bicicleta.</p>
+    <a mat-button routerLink="/">Volver</a>
+  </section>
+}

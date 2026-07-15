@@ -1,0 +1,30 @@
+---
+description: Angular Material 3, SCSS y UX responsive
+globs: "**/*.{html,scss}"
+alwaysApply: false
+---
+
+# UI Material + SCSS
+
+## Material 3
+
+- Usar tokens `var(--mat-sys-*)` y variables del proyecto (`--bikesev-*`).
+- Temas: `color-scheme` / `data-theme` vía settings; no hardcodear paletas en cada componente.
+- Controles: `mat-form-field appearance="outline"`, botones táctiles, FAB solo para acción primaria de lista.
+
+## Layout móvil
+
+- Ancho contenido `min(1100px, 100%)`; padding inferior para FAB.
+- Targets táctiles cómodos; evitar hover-only critical.
+- Alertas: `data-level="warning|critical"` con `--bikesev-warning` / `--bikesev-critical`.
+
+## SCSS
+
+- Estilos colocalizados `component.scss`; globales solo en `styles.scss`.
+- Animaciones cortas (`rise` ~0.45s); sin ruido.
+- Tipografía: `--bikesev-display` (Barlow Condensed) + `--bikesev-body` (Barlow).
+
+## Accesibilidad
+
+- `aria-label` en icon-buttons; diálogos con título claro.
+- No depender solo del color para alertas (texto + borde).

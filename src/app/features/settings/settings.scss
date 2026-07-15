@@ -1,0 +1,100 @@
+header {
+  margin-bottom: 1.25rem;
+}
+
+.eyebrow {
+  margin: 0;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  font-size: 0.72rem;
+  color: var(--bikesev-accent);
+  font-weight: 700;
+}
+
+h1 {
+  margin: 0.25rem 0;
+  font-family: var(--bikesev-display);
+}
+
+.lede {
+  color: var(--mat-sys-on-surface-variant);
+  margin: 0;
+}
+
+.block {
+  margin-bottom: 1.75rem;
+  padding: 1rem;
+  border-radius: 1rem;
+  background: color-mix(in srgb, var(--mat-sys-surface-container) 80%, transparent);
+  border: 1px solid color-mix(in srgb, var(--mat-sys-outline-variant) 40%, transparent);
+
+  h2 {
+    margin: 0 0 0.85rem;
+    font-size: 1.05rem;
+  }
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.35rem;
+}
+
+.grow {
+  flex: 1;
+}
+
+.hours {
+  width: 7.5rem;
+}
+
+.group-label {
+  margin: 1rem 0 0.35rem;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--bikesev-accent);
+}
+
+.name {
+  flex: 1;
+  font-size: 0.95rem;
+}
+
+.actions.sticky {
+  position: sticky;
+  bottom: 0.75rem;
+  z-index: 5;
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 1rem;
+}
+
+.backup-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+  margin-top: 0.75rem;
+}
+
+.import-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.55rem 0.9rem;
+  border-radius: 999px;
+  border: 1px solid var(--mat-sys-outline);
+  cursor: pointer;
+  font-weight: 600;
+
+  input {
+    display: none;
+  }
+}
+
+.backup-note {
+  margin: 0.75rem 0 0;
+  font-size: 0.85rem;
+  color: var(--mat-sys-on-surface-variant);
+}
